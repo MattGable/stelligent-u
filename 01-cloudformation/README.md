@@ -97,6 +97,8 @@ create an AWS Simple Storage Service (S3) Bucket.
 - Commit the template to your Github repository under the 01-cloudformation
   folder.
 
+  committed as cfn-bucket.yaml
+
 #### Lab 1.1.2: Stack Parameters
 
 Update the same template by adding a CloudFormation
@@ -160,19 +162,30 @@ name.
 
 _Why do we prefer the YAML format for CFN templates?_
 
+It's more human readable than JSON, I think.
+
 #### Question: Protecting Resources
 
 _What else can you do to prevent resources in a stack from being deleted?_
 
 See [DeletionPolicy](https://aws.amazon.com/premiumsupport/knowledge-center/cloudformation-accidental-updates/).
 
+you can update it via `update-termination-protection` in the AWS CLI
+
 _How is that different from applying Termination Protection?_
+
+It's done programmatically and can be scripted as part of a deployment
 
 #### Task: String Substitution
 
 Demonstrate 2 ways to code string combination/substitution using
 built-in CFN functions.
 
+Combination:
+ `!Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]],  !Join ["-", [ !Ref "AWS::Region", !Ref BucketName]]]`
+
+Substitution using a conditional and ad IF :
+` !If ["BucketInPreferredRegion",  !Join ["-", [ !Ref "AWS::AccountId", !Ref BucketName]],  !Join ["-", [ !Ref "AWS::Region", !Ref BucketName]]]`
 ## Lesson 1.2: Integration with Other AWS Resources
 
 ### Principle 1.2
@@ -227,12 +240,21 @@ Delete your CFN stacks in the same order you created them in. Did you
 succeed? If not, describe how you would _identify_ the problem, and
 resolve it yourself.
 
+DId not succeded:
+
+```
+Export mattgstack-s3-arn cannot be deleted as it is in use by mattgimportstack
+```
+Cloudformation is smart enough to disallow deletions when there are interstack dependencies like the one used in the above import stack. Deletions in the reverse order they were created in would be one simple way to avoid this issue
+
 ### Retrospective 1.2
 
 #### Task: Policy Tester
 
 Show how to use the IAM policy tester to demonstrate that the user
 cannot perform 'Put' actions on any S3 buckets.
+
+After creating the stack, you can use the policy tester to simulate a user and choose which actions to test. Testing a "Put" against S3, access was denied, verifying this user can't do that write option. 
 
 #### Task: SSM Parameter Store
 

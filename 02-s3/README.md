@@ -121,20 +121,30 @@ Add an object to your bucket:
 
 _How would you copy the contents of the directory to the top level of your bucket?_
 
+you would only list the bucket name in the aws copy command
+
 ##### Question: Directory Copying
 
 _How would you copy the contents and include the directory name in the s3 object
 paths?_
 
+you would add an object path after the bucket name in the command and it will put it in that "directory"
+
+
 ##### Question: Object Access
 
 _[Can anyone else see your file yet](https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html)?_
+
+Yes. In the future, access policies attached at creation time would be necessary for most data
 
 For further reading, see the S3 [Access Policy Language Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/access-policy-language-overview.html).
 
 ##### Question: Sync vs Copy
 
 _What makes "sync" a better choice than "cp" for some S3 uploads?_
+
+Sync won't reupload unchanged files, so there could be some bandwith savings, especially if s3 buckets
+are used as a source of data for applications (Apache Camel ingesting data, etc)
 
 #### Lab 2.1.3: Exclude Private Objects When Uploading to a Bucket
 
@@ -146,10 +156,14 @@ bucket again **without including the private file**.
 - Did you find two different ways to accomplish this task? If not, make sure to
   read the [documentation on sync flags](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html).
 
+  I ran a syn with the `--exclude` flag. Another way would be to copy the files manually, or have a `private` local directory.
+
 #### Lab 2.1.4: Clean Up
 
 Clean up: remove your bucket. What do you have to do before you can
 remove it?
+
+The contents needed to be deleted.
 
 ### Retrospective 2.1
 
@@ -172,13 +186,20 @@ directory with the "aws s3 sync" command.
 
 - Include the "private.txt" file this time.
 
+`aws s3api create-bucket --region us-west-2 --bucket stelligent-u-matthew.gable.labs --create-bucket-configuration LocationConstraint=us-west-2`
+
+
 - Use a "sync" command parameter to make all the files in the bucket
   publicly readable.
+
+`aws s3 sync ./data s3://stelligent-u-matthew.gable.labs/data --acl public-read`
 
 ##### Question: Downloading Protection
 
 _After this, can you download one of your files from the bucket without using
 your API credentials?_
+
+Yes. 
 
 #### Lab 2.2.2: Use the CLI to Restrict Access to Private Data
 
@@ -191,11 +212,15 @@ permissions of the other files.
 _How could you use "aws s3 cp" or "aws s3 sync" command to modify the
 permissions on the file?_
 
+`aws s3 cp privatefile.txt s3://stelligent-u-matthew.gable.labs/data/privatefile.txt --acl bucket-owner-full-control`
+
 (Hint: see the list of [Canned ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).)
 
 ##### Question: Changing Permissions
 
 _Is there a way you can change the permissions on the file without re-uploading it?_
+
+One way to do it without a reupload would be to edit the permissions in the UI
 
 #### Lab 2.2.3: Using the API from the CLI
 
@@ -210,10 +235,16 @@ authenticated user:
 - Create and assign an IAM policy to explicitly grant yourself
   maintenance access.
 
+  Assigned via UI and JSON policy builder
+
 - Set a bucket policy to grant public read access.
+
+`aws s3api put-bucket-policy --policy file://bucket-policy.json --bucket stelligent-u-matthew.gable.labs`
 
 - Set an S3 ACL on "private.txt" to block read access unless you're
   authenticated.
+
+`aws s3api put-object-acl --acl authenticated-read --bucket stelligent-u-matthew.gable.labs --key data/privatefile.txt`
 
 When you're done, verify that anybody (e.g. you, unauthenticated) can
 read most files but can't read "private.txt", and only you can modify
@@ -224,9 +255,13 @@ file and read "private.txt".
 _What do you see when you try to read the existing bucket policy before you
 replace it?_
 
+I can see the private file and others before editing the policy
+
 #### Question: Default Permissions
 
 _How do the default permissions differ from the policy you're setting?_
+
+Default permissions are very permissive and allow even public access by default
 
 #### Lab 2.2.4: Using CloudFormation
 
@@ -295,9 +330,13 @@ Delete one of the objects that you changed.
 
 _Can you still retrieve old versions of the object you removed?_
 
+Yes, in the UI you can show versions and see the deleted versions
+
 ##### Question: Deleting All Versions
 
 _How would you delete all versions?_
+
+I think you would need to dleete all versioned objects with deletion inputs, so this might require a scripted approach to make it a push button operation. 
 
 #### Lab 2.3.3: Tagging S3 Resources
 
@@ -309,6 +348,8 @@ through the CLI or the console.
 
 _Can you change a single tag on a bucket or object, or do you have to change
 all its tags at once?_
+
+  Cloudformation allows adding a tag without disturbing the other tags, but it seems `aws s3spi put-bucket-tagging` might have an issue with trying to remove system tags when attempting to add another tag 
 
 (See `aws:cloudformation:stack-id` and other AWS-managed tags.)
 
@@ -331,6 +372,8 @@ _Management Lifecycle_ tab to double-check your settings.
 
 _Can you make any of these transitions more quickly?_
 
+We could edit the thresholds to be whatever integer value we wanted
+
 *See the [S3 lifecycle transitions doc](https://docs.aws.amazon.com/AmazonS3/latest/dev/lifecycle-transition-general-considerations.html).*
 
 ### Stretch Challenge
@@ -341,8 +384,14 @@ expire them after 1 day.
 ### Retrospective 2.3
 
 *How could the lifecycle and versioning features of S3 be used to manage
-the lifecycle of a web application? Would you use those features to manage
+the lifecycle of a web application?
+
+If the webapplication polled, say, an s3 bucket for XML configuations, those could be versioned and expired and the webapplication could be powered in part by s3 versioning
+
+ Would you use those features to manage
 the webapp code itself, or just the app's data?*
+
+I wouldn't use this to version the webapp code. It's possible, but I would imagine code versions should usually be managed by CI/CD and perhaps even human-managed promotions to prod environments. 
 
 ## Lesson 2.4: S3 Object Encryption
 

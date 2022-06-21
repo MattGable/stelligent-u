@@ -1,0 +1,26 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: 'mattg user'
+
+Parameters:
+  UserName:
+    Type: String
+    Description: 'The name of the user'
+    Default: 'mattgDefaultName'
+  UserNameParameter:
+    Type : 'AWS::SSM::Parameter::Value<String>'
+    Default: mattgusername
+Resources:
+  IAMUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: !Ref UserNameParameter
+      ManagedPolicyArns: 
+        - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+
+Outputs:
+  IAMManagedS3AccessArn:
+    Value: "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+    Export: 
+      Name: !Sub "${AWS::StackName}-s3-arn"
