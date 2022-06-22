@@ -92,6 +92,8 @@ Create a CFN template that specifies an IAM Role.
   - List all the Roles
   - Describe the specific Role your Stack created.
 
+  The role created allows for all principals to assume the role. The role itself has one policy attached: an AWS managed policy that allows IAM read only access.
+
 #### Lab 3.1.2: Customer Managed Policy
 
 Update the template and the corresponding Stack to make the IAM Role's
@@ -121,6 +123,13 @@ policy:
   indicate the re-use of the policy.
 
 - Update the Stack. *Did the stack update work?*
+I converted the inline policy to a customer managed policy in this step. 
+
+I'm not sure I reproduced the above issue to say "no" but I believe the answert would be no. I added RoleName properties and tried to update the stack with different RoleNames and it errored due to dependency issues. So there are things that can't be updated.
+
+I also had to attach the customer managed policy by specifying roles in the policy.
+
+Tearing down and rebuilding fixed the issue.
 
   - Query the stack to determine its state.
   - If the stack update was not successful,
@@ -168,10 +177,14 @@ stack's two roles in order to pass those values to the CLI function. You
 probably used the AWS web console to get the ARN for each role. What
 could you have done to your CFN template to make that unnecessary?_
 
+This was not part of the Asana manifest, so this is skipped. 
+
 #### Task: Stack Outputs
 
 Institute that change from the Question above. Recreate the stack as per
 Lab 3.1.5, and demonstrate how to retrieve the ARNs.
+
+Same as above.
 
 ## Lesson 3.2: Trust Relationships & Assuming Roles
 
@@ -217,6 +230,9 @@ file, use [aws sts assume-role](https://docs.aws.amazon.com/IAM/latest/UserGuide
 It's a valuable mechanism you'll use often through the API, and it's good to
 know how to do it from the CLI as well.*
 
+I didn't run into any issues on this  (I put the credentials into a new profile)
+
+
 #### Lab 3.2.2: Explore the assumed role
 
 Test the capabilities of this new Role.
@@ -227,6 +243,7 @@ Test the capabilities of this new Role.
 - Acting as this role, try to create an S3 bucket using the AWS CLI.
 
   - Did it succeed? It should not have!
+  It did not succeed `AccessDenied`
   - If it succeeded, troubleshoot how Read access allowed the role
     to create a bucket.
 
@@ -247,22 +264,36 @@ buckets.
 - If it failed, troubleshoot the error iteratively until the role is
   able to upload a file to the bucket.
 
+  All systems go
+
 #### Lab 3.2.4: Clean up
 
 Clean up. Take the actions necessary to delete the stack.
+
+Bucket and stack deleted.
 
 ### Retrospective 3.2
 
 #### Question: Inline vs Customer Managed Policies
 
 _In the context of an AWS User or Role, what is the difference between
-an inline policy and a customer managed policy? What are the differences
+an inline policy and a customer managed policy? 
+
+A customer managed policy is a customer-created standalone reusable policy. An inline policy is created as part of an IAM resource/identity. 
+
+
+What are the differences
 between a customer managed policy and an AWS managed policy?_
+
+An IAM managed policy is created and housed in AWS and is a standard available for users. A customer managed policy is stored via a similar mechanism, but customers like us can create and edit these policies. 
 
 #### Question: Role Assumption
 
 _When assuming a role, are the permissions of the initial principal
 mixed with those of the role being assumed?
+
+No. When using the "new" role, that principal's permissions are limited to that role. 
+
 Describe how that could easily be demonstrated with both a
 [positive and negative testing](https://www.guru99.com/positive-vs-negative-testing.html)
 approach._
@@ -307,6 +338,15 @@ demonstrate you have full access to each bucket with this new role.
 
 - Assume the new role and repeat those two checks as that role.
 
+```
+matthew.gable@MACUSSTG2524595 03-iam % aws s3 ls s3://mattgiamstack-s3bucket2-zwq3dhs4c61h --recursive --profile temp
+2022-06-22 10:47:36          0 text.txt
+2022-06-22 10:49:59          0 text2.txt
+matthew.gable@MACUSSTG2524595 03-iam % aws s3 ls s3://mattgiamstack-s3bucket-11hc49xqmd4p3 --recursive --profile temp
+2022-06-22 10:47:23          0 text.txt
+2022-06-22 10:50:52          0 text2.txt
+```
+
 #### Lab 3.3.2: Resource restrictions
 
 Add a resource restriction to the role's policy that limits full access
@@ -322,12 +362,26 @@ read-only access to the other.
 
 *Were there any errors? If so, take note of them.*
 
+My own errors, which were assuming I could list the bucket with a "/* resource string, but I think that excludes the bucket object itself. "*" directly after the bucket name allowed listing. 
+
 *What were the results you expected, based on the role's policy?*
+I expected to be able to list and read from boath but only be able to upload to bucket 1. 
+
+``
+matthew.gable@MACUSSTG2524595 03-iam % aws s3 cp text.txt s3://mattgiamstack-s3bucket-11hc49xqmd4p3/mod3.3.32.txt --profile temp
+upload: ./text.txt to s3://mattgiamstack-s3bucket-11hc49xqmd4p3/mod3.3.32.txt
+matthew.gable@MACUSSTG2524595 03-iam % aws s3 cp text.txt s3://mattgiamstack-s3bucket2-zwq3dhs4c61h/mod3.3.32.txt --profile temp
+upload failed: ./text.txt to s3://mattgiamstack-s3bucket2-zwq3dhs4c61h/mod3.3.32.txt An error occurred (AccessDenied) when calling the PutObject operation: Access Denied
+matthew.gable@MACUSSTG2524595 03-iam % 
+```
+
 
 #### Lab 3.3.3: Conditional restrictions
 
 Add a conditional restriction to the role's policy. Provide a condition
 that grants list access only to objects that start with "lebowski/".
+
+`I'll abide`
 
 - Update the stack.
 
