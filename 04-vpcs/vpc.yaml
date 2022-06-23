@@ -49,18 +49,19 @@ Resources:
         - Key: Name
           Value: !Ref EnvironmentName
 
-  # InternetGateway:
-  #   Type: AWS::EC2::InternetGateway
-  #   Properties:
-  #     Tags:
-  #       - Key: Name
-  #         Value: !Ref EnvironmentName
+# Create IGW and attach to VPC
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
 
-  # InternetGatewayAttachment:
-  #   Type: AWS::EC2::VPCGatewayAttachment
-  #   Properties:
-  #     InternetGatewayId: !Ref InternetGateway
-  #     VpcId: !Ref VPC
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
 
   # PublicSubnet1:
   #   Type: AWS::EC2::Subnet
@@ -90,7 +91,7 @@ Resources:
       VpcId: !Ref VPC
       AvailabilityZone: !Select [ 0, !GetAZs  '' ]
       CidrBlock: !Ref PrivateSubnet1CIDR
-      MapPublicIpOnLaunch: false
+      MapPublicIpOnLaunch: true
       Tags:
         - Key: user
           Value: matthew.gable.labs
@@ -185,6 +186,13 @@ Resources:
   #     RouteTableId: !Ref PrivateRouteTable1
   #     DestinationCidrBlock: 0.0.0.0/0
   #     NatGatewayId: !Ref NatGateway1
+
+  DefaultPrivateRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
 
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
