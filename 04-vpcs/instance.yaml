@@ -49,8 +49,30 @@ Resources:
           ToPort: 22
         - CidrIp: "0.0.0.0/0"
           IpProtocol: icmp
-          FromPort: 0
-          ToPort: 16
+          FromPort: 8
+          ToPort: -1
+      Tags:
+        - Key: Name
+          Value: mattginstance
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1.4
+        - Key: stelligent-u-lab
+          Value: 4.1.4
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref EC2Instance
+      Tags:
+        - Key: Name
+          Value: mattginstance
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1.4
+        - Key: stelligent-u-lab
+          Value: 4.1.4
 
 Outputs:
   PrivateIp:
@@ -59,6 +81,9 @@ Outputs:
   InstanceId:
     Description: Instance ID
     Value: !Ref EC2Instance
+  PublicIp:
+    Description: Public IP connected to instance
+    Value: !Ref ElasticIP
   
 
 

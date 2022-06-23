@@ -172,13 +172,19 @@ reachable from anywhere outside your VPC.
 
 _Can you ping your instance now?_
 
+Had to tweak icmp setting via an update, but yes
+
 ##### Question: SSH
 
 _Can you ssh into your instance now?_
 
+Yes
+
 ##### Question: Traffic
 
 _If you can ssh, can you send any traffic (e.g. curl) out to the Internet?_
+
+Yes default (and the SG I added) allowed permissive egress 
 
 At this point, you've made your public EC2 instance an [ssh bastion](https://docs.aws.amazon.com/quickstart/latest/linux-bastion/architecture.html).
 We'll make use of that to explore your network below.
