@@ -135,10 +135,14 @@ Launch an EC2 instance into your VPC.
 
 _After you launch your new stack, can you ssh to the instance?_
 
+No. ( lab 4.1.5 will solve this I think :) 
+
 ##### Question: Verify Connectivity
 
 _Is there a way that you can verify Internet connectivity from the instance
 without ssh'ing to it?_
+
+SSM would work, but it needs additional configuration on my stack
 
 #### Lab 4.1.5: Security Group
 

@@ -1,0 +1,45 @@
+Description:  Matt G EC2 Instance
+
+Parameters:
+  ami:
+    Description: The AMI of the instance
+    Type: String
+    Default: ami-0cff7528ff583bf9a
+  instance:
+    Description: The instance type
+    Type: String
+    Default: t2.nano
+  key:
+    Description: The instance key
+    Type: String
+
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      Tenancy: default
+      SubnetId: !ImportValue mattgpubsubnetid1
+      KeyName: !Ref key
+      InstanceType: !Ref instance
+      ImageId: !Ref ami
+      Tags:
+        - Key: Name
+          Value: mattginstance
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1.4
+        - Key: stelligent-u-lab
+          Value: 4.1.4
+
+Outputs:
+  PrivateIp:
+    Description: Private IP of instance
+    Value: !GetAtt EC2Instance.PrivateIp
+  InstanceId:
+    Description: Instance ID
+    Value: !Ref EC2Instance
+  
+
+
+
