@@ -252,7 +252,7 @@ Outputs:
   #   Value: !Ref PublicSubnet2
 
   MattSubnet1:
-    Description: A reference to the private subnet in the 1st Availability Zone
+    Description: A reference to the public subnet
     Value: !GetAtt MattSubnet1.SubnetId
     Export:
       Name: mattgpubsubnetid1
