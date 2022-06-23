@@ -21,7 +21,7 @@ Parameters:
   #   Type: String
   #   Default: 10.199.11.0/24
 
-  PrivateSubnet1CIDR:
+  MattSubnet1CIDR:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
     Type: String
     Default: 10.199.99.0/24
@@ -85,12 +85,12 @@ Resources:
   #       - Key: Name
   #         Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
 
-  PrivateSubnet1:
+  MattSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Select [ 0, !GetAZs  '' ]
-      CidrBlock: !Ref PrivateSubnet1CIDR
+      CidrBlock: !Ref MattSubnet1CIDR
       MapPublicIpOnLaunch: true
       Tags:
         - Key: user
@@ -194,11 +194,11 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
-  PrivateSubnet1RouteTableAssociation:
+  MattSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PrivateRouteTable1
-      SubnetId: !Ref PrivateSubnet1
+      SubnetId: !Ref MattSubnet1
 
   # PrivateRouteTable2:
   #   Type: AWS::EC2::RouteTable
@@ -239,7 +239,7 @@ Resources:
 
   # PrivateSubnets:
   #   Description: A list of the private subnets
-  #   Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2 ]]
+  #   Value: !Join [ ",", [ !Ref MattSubnet1, !Ref PrivateSubnet2 ]]
 
   # PublicSubnet1:
   #   Description: A reference to the public subnet in the 1st Availability Zone
@@ -249,9 +249,9 @@ Resources:
   #   Description: A reference to the public subnet in the 2nd Availability Zone
   #   Value: !Ref PublicSubnet2
 
-  # PrivateSubnet1:
+  # MattSubnet1:
   #   Description: A reference to the private subnet in the 1st Availability Zone
-  #   Value: !Ref PrivateSubnet1
+  #   Value: !Ref MattSubnet1
 
   # PrivateSubnet2:
   #   Description: A reference to the private subnet in the 2nd Availability Zone
