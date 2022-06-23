@@ -22,6 +22,8 @@ Resources:
       KeyName: !Ref key
       InstanceType: !Ref instance
       ImageId: !Ref ami
+      SecurityGroupIds:
+       - !Ref SecurityGroup
       Tags:
         - Key: Name
           Value: mattginstance
@@ -31,6 +33,24 @@ Resources:
           Value: 4.1.4
         - Key: stelligent-u-lab
           Value: 4.1.4
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !ImportValue mattgvpcid
+      GroupDescription: An SG to allow SSH and ping to mattg instance
+      GroupName: mattgsg
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          CidrIp: '0.0.0.0/0'
+      SecurityGroupIngress:
+        - CidrIp: "0.0.0.0/0"
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+        - CidrIp: "0.0.0.0/0"
+          IpProtocol: icmp
+          FromPort: 0
+          ToPort: 16
 
 Outputs:
   PrivateIp:
