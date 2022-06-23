@@ -228,10 +228,12 @@ Resources:
   #     GroupDescription: "Security group with no ingress rule"
   #     VpcId: !Ref VPC
 
-# Outputs:
-  # VPC:
-  #   Description: A reference to the created VPC
-  #   Value: !Ref VPC
+Outputs:
+  VPC:
+    Description: A reference to the created VPC
+    Value: !GetAtt VPC.VpcId
+    Export:
+      Name: mattgvpcid
 
   # PublicSubnets:
   #   Description: A list of the public subnets
@@ -249,9 +251,11 @@ Resources:
   #   Description: A reference to the public subnet in the 2nd Availability Zone
   #   Value: !Ref PublicSubnet2
 
-  # MattSubnet1:
-  #   Description: A reference to the private subnet in the 1st Availability Zone
-  #   Value: !Ref MattSubnet1
+  MattSubnet1:
+    Description: A reference to the private subnet in the 1st Availability Zone
+    Value: !GetAtt MattSubnet1.SubnetId
+    Export:
+      Name: mattgpubsubnetid1
 
   # PrivateSubnet2:
   #   Description: A reference to the private subnet in the 2nd Availability Zone
