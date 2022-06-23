@@ -110,6 +110,8 @@ AWS CLI.
 
 - Save the output as a .pem file in your project directory.
 
+Saved but not checked in
+
 - Be sure to create it in the same region you'll be doing your labs.
 
 #### Lab 4.1.4: Test Instance
