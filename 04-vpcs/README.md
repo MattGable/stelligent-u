@@ -214,14 +214,19 @@ existing instance stack.
 
 _Can you find a way to ssh to this instance?_
 
+The instance does not have a public IP so no ssh connectivity as submitted
 ##### Question: Egress
 
 _If you can ssh to it, can you send traffic out?_
+
+I would assume traffic would go out, but no proof of concept
 
 ##### Question: Deleting the Gateway
 
 _If you delete the NAT gateway, what happens to the ssh session on your private
 instance?_
+
+NA
 
 ##### Question: Recreating the Gateway
 

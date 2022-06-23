@@ -26,10 +26,10 @@ Parameters:
     Type: String
     Default: 10.199.99.0/24
 
-  # PrivateSubnet2CIDR:
-  #   Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
-  #   Type: String
-  #   Default: 10.199.21.0/24
+  PrivateSubnet2CIDR:
+    Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
+    Type: String
+    Default: 10.199.21.0/24
 
 Resources:
   VPC:
@@ -102,40 +102,40 @@ Resources:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
 
-  # PrivateSubnet2:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     VpcId: !Ref VPC
-  #     AvailabilityZone: !Select [ 1, !GetAZs  '' ]
-  #     CidrBlock: !Ref PrivateSubnet2CIDR
-  #     MapPublicIpOnLaunch: false
-  #     Tags:
-  #       - Key: Name
-  #         Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      CidrBlock: !Ref PrivateSubnet2CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
 
-  # NatGateway1EIP:
-  #   Type: AWS::EC2::EIP
-  #   DependsOn: InternetGatewayAttachment
-  #   Properties:
-  #     Domain: vpc
+  NatGateway1EIP:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
 
-  # NatGateway2EIP:
-  #   Type: AWS::EC2::EIP
-  #   DependsOn: InternetGatewayAttachment
-  #   Properties:
-  #     Domain: vpc
+  NatGateway2EIP:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
 
-  # NatGateway1:
-  #   Type: AWS::EC2::NatGateway
-  #   Properties:
-  #     AllocationId: !GetAtt NatGateway1EIP.AllocationId
-  #     SubnetId: !Ref PublicSubnet1
+  NatGateway1:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGateway1EIP.AllocationId
+      SubnetId: !Ref MattSubnet1
 
-  # NatGateway2:
-  #   Type: AWS::EC2::NatGateway
-  #   Properties:
-  #     AllocationId: !GetAtt NatGateway2EIP.AllocationId
-  #     SubnetId: !Ref PublicSubnet2
+  NatGateway2:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGateway2EIP.AllocationId      
+      SubnetId: !Ref PrivateSubnet2
 
   # PublicRouteTable:
   #   Type: AWS::EC2::RouteTable
@@ -200,26 +200,26 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable1
       SubnetId: !Ref MattSubnet1
 
-  # PrivateRouteTable2:
-  #   Type: AWS::EC2::RouteTable
-  #   Properties:
-  #     VpcId: !Ref VPC
-  #     Tags:
-  #       - Key: Name
-  #         Value: !Sub ${EnvironmentName} Private Routes (AZ2)
+  PrivateRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Routes (AZ2)
 
-  # DefaultPrivateRoute2:
-  #   Type: AWS::EC2::Route
-  #   Properties:
-  #     RouteTableId: !Ref PrivateRouteTable2
-  #     DestinationCidrBlock: 0.0.0.0/0
-  #     NatGatewayId: !Ref NatGateway2
+  DefaultPrivateRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway2
 
-  # PrivateSubnet2RouteTableAssociation:
-  #   Type: AWS::EC2::SubnetRouteTableAssociation
-  #   Properties:
-  #     RouteTableId: !Ref PrivateRouteTable2
-  #     SubnetId: !Ref PrivateSubnet2
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      SubnetId: !Ref PrivateSubnet2
 
   # NoIngressSecurityGroup:
   #   Type: AWS::EC2::SecurityGroup
@@ -227,6 +227,25 @@ Resources:
   #     GroupName: "no-ingress-sg"
   #     GroupDescription: "Security group with no ingress rule"
   #     VpcId: !Ref VPC
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      Tenancy: default
+      SubnetId: !Ref PrivateSubnet2
+      KeyName: mattgkey
+      InstanceType: t2.medium
+      ImageId: ami-0cff7528ff583bf9a
+      # SecurityGroupIds:
+      #  - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: mattginstance2
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1.4
+        - Key: stelligent-u-lab
+          Value: 4.1.4
 
 Outputs:
   VPC:
