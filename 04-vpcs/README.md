@@ -226,7 +226,7 @@ I would assume traffic would go out, but no proof of concept
 _If you delete the NAT gateway, what happens to the ssh session on your private
 instance?_
 
-NA
+No connectivity per previous step
 
 ##### Question: Recreating the Gateway
 
@@ -234,6 +234,8 @@ _If you recreate the NAT gateway and detach the Elastic IP from the public EC2
 instance, can you still reach the instance from the outside?_
 
 Test it out with the AWS console.
+
+A new IP was allocated but no connectivity
 
 #### Lab 4.1.8: Network ACL
 
@@ -243,13 +245,15 @@ First, add one on the public subnet:
 
 - It applies to all traffic (0.0.0.0/0).
 
-- Only allows ssh traffic from your IP address.
+- Only allows ssh traffic from your IP address (skipped in lieu of a permissive rule that will allow ssh and all other traffic)
 
 - Allows egress traffic to anything.
 
 ##### Question: EC2 Connection
 
 _Can you still reach your EC2 instances?_
+
+No I can no longer reach the instances
 
 Add another ACL to your private subnet:
 
@@ -261,6 +265,8 @@ Add another ACL to your private subnet:
   public subnet.
 
 _Verify again that you can reach your instance._
+
+No instance connectivity on either instance
 
 ### Retrospective 4.1
 
