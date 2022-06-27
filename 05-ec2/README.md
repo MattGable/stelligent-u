@@ -140,6 +140,7 @@ Windows Server 2012 R2:
 
 - Query the stack's events using the AWS CLI. What happened to your
   original EC2 Windows instance?
+  The original instance was marked for cleanup and deleted.
 
 #### Lab 5.1.4: Teardown
 

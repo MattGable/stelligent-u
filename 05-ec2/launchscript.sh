@@ -15,6 +15,10 @@ create_stack() {
     aws cloudformation create-stack --stack-name ${STACK_NAME} --template-body file://$STACK_NAME.yaml
 }
 
+update_stack() {
+    aws cloudformation update-stack --stack-name ${STACK_NAME} --template-body file://$STACK_NAME.yaml
+}
+
 delete_stack() {
     aws cloudformation delete-stack --stack-name ${STACK_NAME}
 }
@@ -56,5 +60,9 @@ wait_until_stack_destroys() {
 # create_stack
 # wait_until_stack_completes
 
-delete_stack
-wait_until_stack_destroys
+validate_stack
+update_stack
+wait_until_stack_completes
+
+# delete_stack
+# wait_until_stack_destroys
