@@ -1,5 +1,16 @@
 Description: Launch template for EC2 instances
 
+# Use public Systems Manager Parameter
+Parameters:
+  UbuntuId:
+    Type: String
+    Default: ami-052efd3df9dad4825
+
+# Use public Systems Manager Parameter
+  WindowsId:
+    Type: String
+    Default: ami-03e42a81d67097502
+
 Resources:
   LaunchTemplate1:
     Type: AWS::EC2::LaunchTemplate
@@ -24,7 +35,7 @@ Resources:
   EC2InstanceWindows:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0dff35e6f6e21b962
+      ImageId: !Ref WindowsId
       SubnetId: !ImportValue mattgpublicsubnet1
       LaunchTemplate: 
         LaunchTemplateId: !Ref LaunchTemplate1
@@ -32,7 +43,7 @@ Resources:
   EC2InstanceUbuntu:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-052efd3df9dad4825
+      ImageId: !Ref UbuntuId
       SubnetId: !ImportValue mattgpublicsubnet1
       LaunchTemplate: 
         LaunchTemplateId: !Ref LaunchTemplate1

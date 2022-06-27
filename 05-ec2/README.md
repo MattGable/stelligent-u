@@ -159,16 +159,24 @@ An error occurred (ValidationError) when calling the DescribeStackEvents operati
 #### Task: Automating AMI Discovery
 
 In lab 2, how did you find the AMI IDs required to launch the instances
-in your target region? If you did *not use* a scripted mechanism, go
+in your target region?
+
+Found via the UI.
+
+ If you did *not use* a scripted mechanism, go
 back and change your lab's code and repeat that lab: parameterize the
 CFN template to accept both Linux and Windows AMI IDs, and provide the
 values via a scripted mechanism.
+
+aws ec2 describe images is one programmatic way to get lists of AMIs
 
 #### Question: Resource Replacement
 
 _When updating a Stack containing an EC2 instance,
 [what other changes](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html)
 will cause the same thing to occur as in Lab 5.1.3?_
+
+changing the AMI, changing the instance IPV6 address, or changing the availability zone will require the same replacement as seen with changing AMI
 
 ## Lesson 5.2: Instance Access
 
