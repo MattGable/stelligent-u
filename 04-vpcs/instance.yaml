@@ -49,8 +49,8 @@ Resources:
           ToPort: 22
         - CidrIp: "0.0.0.0/0"
           IpProtocol: icmp
-          FromPort: 8
-          ToPort: -1
+          FromPort: 9
+          ToPort: 16
       Tags:
         - Key: Name
           Value: mattginstance

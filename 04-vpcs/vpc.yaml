@@ -49,10 +49,10 @@ Resources:
         - Key: Name
           Value: !Ref EnvironmentName
 
-  NetworkAcl:
-    Type: AWS::EC2::NetworkAcl
-    Properties:
-      VpcId: !Ref VPC
+  # NetworkAcl:
+  #   Type: AWS::EC2::NetworkAcl
+  #   Properties:
+  #     VpcId: !Ref VPC
   # NetworkAclEntry1:
   #   Type: AWS::EC2::NetworkAclEntry
   #   Properties:
@@ -65,42 +65,42 @@ Resources:
   #     Protocol: -1
   #     RuleAction: Allow
   #     RuleNumber: 100
-  NetworkAclEntry2:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      CidrBlock:  10.199.99.0/24
-      Egress: false
-      NetworkAclId: !Ref NetworkAcl
-      PortRange:
-        From: 8
-        To: -1
-      Protocol: icmp
-      RuleAction: Allow
-      RuleNumber: 100
-  NetworkAclEntry3:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      CidrBlock:  10.199.99.0/24
-      Egress: false
-      NetworkAclId: !Ref NetworkAcl
-      PortRange:
-        From: 80
-        To: 80
-      Protocol: tcp
-      RuleAction: Allow
-      RuleNumber: 100
-  NetworkAclEntry4:
-    Type: AWS::EC2::NetworkAclEntry
-    Properties:
-      CidrBlock:  10.199.99.0/24
-      Egress: false
-      NetworkAclId: !Ref NetworkAcl
-      PortRange:
-        From: 22
-        To: 22
-      Protocol: tcp
-      RuleAction: Allow
-      RuleNumber: 105
+  # NetworkAclEntry2:
+  #   Type: AWS::EC2::NetworkAclEntry
+  #   Properties:
+  #     CidrBlock:  10.199.99.0/24
+  #     Egress: false
+  #     NetworkAclId: !Ref NetworkAcl
+  #     PortRange:
+  #       From: 8
+  #       To: -1
+  #     Protocol: icmp
+  #     RuleAction: Allow
+  #     RuleNumber: 100
+  # NetworkAclEntry3:
+  #   Type: AWS::EC2::NetworkAclEntry
+  #   Properties:
+  #     CidrBlock:  10.199.99.0/24
+  #     Egress: false
+  #     NetworkAclId: !Ref NetworkAcl
+  #     PortRange:
+  #       From: 80
+  #       To: 80
+  #     Protocol: tcp
+  #     RuleAction: Allow
+  #     RuleNumber: 100
+  # NetworkAclEntry4:
+  #   Type: AWS::EC2::NetworkAclEntry
+  #   Properties:
+  #     CidrBlock:  10.199.99.0/24
+  #     Egress: false
+  #     NetworkAclId: !Ref NetworkAcl
+  #     PortRange:
+  #       From: 22
+  #       To: 22
+  #     Protocol: tcp
+  #     RuleAction: Allow
+  #     RuleNumber: 105
   # NetworkAclEntry2:
   #   Type: AWS::EC2::NetworkAclEntry
   #   Properties:
@@ -113,11 +113,11 @@ Resources:
   #     Protocol: -1
   #     RuleAction: Allow
   #     RuleNumber: 101
-  PublicSubnetAclAssociation:
-    Type: AWS::EC2::SubnetNetworkAclAssociation
-    Properties:
-      NetworkAclId: !Ref NetworkAcl
-      SubnetId: !Ref MattSubnet1
+  # PublicSubnetAclAssociation:
+  #   Type: AWS::EC2::SubnetNetworkAclAssociation
+  #   Properties:
+  #     NetworkAclId: !Ref NetworkAcl
+  #     SubnetId: !Ref MattSubnet1
 
 
 
