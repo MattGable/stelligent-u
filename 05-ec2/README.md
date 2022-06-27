@@ -150,6 +150,10 @@ and the instance being considered eliminated altogether.
 - Delete your Stack. Immediately after initiating Stack deletion, see
   if you can query your instance states.
 
+```
+An error occurred (ValidationError) when calling the DescribeStackEvents operation: Stack [mattglaunchtemplate] does not exist
+```
+
 ### Retrospective 5.1
 
 #### Task: Automating AMI Discovery

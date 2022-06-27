@@ -60,9 +60,9 @@ wait_until_stack_destroys() {
 # create_stack
 # wait_until_stack_completes
 
-validate_stack
-update_stack
-wait_until_stack_completes
+# validate_stack
+# update_stack
+# wait_until_stack_completes
 
-# delete_stack
-# wait_until_stack_destroys
+delete_stack
+wait_until_stack_destroys
