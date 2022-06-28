@@ -213,6 +213,8 @@ function.
 
 Try pinging that IP address. Does it work?
 
+Yes
+
 - Using the CFN template, create a Security Group enabling
   [ICMP](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol).
 

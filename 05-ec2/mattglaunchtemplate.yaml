@@ -32,14 +32,14 @@ Resources:
                 Value: 5.x
               - Key: stelligent-u-lab
                 Value: 5.x
-  EC2InstanceWindows:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: !Ref WindowsId
-      SubnetId: !ImportValue mattgpublicsubnet1
-      LaunchTemplate: 
-        LaunchTemplateId: !Ref LaunchTemplate1
-        Version: 1
+  # EC2InstanceWindows:
+  #   Type: AWS::EC2::Instance
+  #   Properties:
+  #     ImageId: !Ref WindowsId
+  #     SubnetId: !ImportValue mattgpublicsubnet1
+  #     LaunchTemplate: 
+  #       LaunchTemplateId: !Ref LaunchTemplate1
+  #       Version: 1
   EC2InstanceUbuntu:
     Type: AWS::EC2::Instance
     Properties:
@@ -48,3 +48,15 @@ Resources:
       LaunchTemplate: 
         LaunchTemplateId: !Ref LaunchTemplate1
         Version: 1
+  UbuntuElasticIP:
+    Type: AWS::EC2::EIP
+    Properties: 
+      Domain: vpc
+      InstanceId: !Ref EC2InstanceUbuntu
+
+Outputs:
+  UbuntuEIP:
+    Description: The Elastic IP of the Ubuntu Instance
+    Value: !Ref UbuntuElasticIP
+    Export:
+      Name: mattgubuntueip
