@@ -248,11 +248,15 @@ able to SSH into the instance to debug and troubleshoot issues.
 
 Can you SSH into the instance?
 
+Yes.
+
 - Update the CFN template to modify the ICMP-enabling Security Group,
   enabling SSH ingress on Port 22 from your IP and update the stack.
 
 Now can you SSH into your instance? If not, troubleshoot and fix the
 issue using your CFN template.
+
+Yes. 
 
 ### Retrospective 5.2
 

@@ -18,19 +18,19 @@ Resources:
       LaunchTemplateName: mattgtemplate
       LaunchTemplateData:
         InstanceType: t2.large
-        KeyName: mattg
+        KeyName: mattgclikey
         SecurityGroupIds:
           - !ImportValue allowingresssecuritygroup
         TagSpecifications:
           - ResourceType: instance
             Tags:
               - Key: Name
-                Value: mattgltinstance
+                Value: mattgltinstance2
               - Key: user
-                Value: matthew.gable.labs
+                Value: matthew.gable.labs2
               - Key: stelligent-u-lesson
                 Value: 5.x
-              - Key: stelligent-u-lab
+              - Key: stelligent-u-lab2
                 Value: 5.x
   # EC2InstanceWindows:
   #   Type: AWS::EC2::Instance
@@ -47,7 +47,7 @@ Resources:
       SubnetId: !ImportValue mattgpublicsubnet1
       LaunchTemplate: 
         LaunchTemplateId: !Ref LaunchTemplate1
-        Version: 1
+        Version: 2
   UbuntuElasticIP:
     Type: AWS::EC2::EIP
     Properties: 
