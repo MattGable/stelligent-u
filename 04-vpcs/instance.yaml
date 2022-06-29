@@ -1,0 +1,90 @@
+Description:  Matt G EC2 Instance
+
+Parameters:
+  ami:
+    Description: The AMI of the instance
+    Type: String
+    Default: ami-0cff7528ff583bf9a
+  instance:
+    Description: The instance type
+    Type: String
+    Default: t2.nano
+  key:
+    Description: The instance key
+    Type: String
+
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      Tenancy: default
+      SubnetId: !ImportValue mattgpubsubnetid1
+      KeyName: !Ref key
+      InstanceType: !Ref instance
+      ImageId: !Ref ami
+      SecurityGroupIds:
+       - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: mattginstance
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1.4
+        - Key: stelligent-u-lab
+          Value: 4.1.4
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !ImportValue mattgvpcid
+      GroupDescription: An SG to allow SSH and ping to mattg instance
+      GroupName: mattgsg
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          CidrIp: '0.0.0.0/0'
+      SecurityGroupIngress:
+        - CidrIp: "0.0.0.0/0"
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+        - CidrIp: "0.0.0.0/0"
+          IpProtocol: icmp
+          FromPort: 8
+          ToPort: -1
+      Tags:
+        - Key: Name
+          Value: mattginstance
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1.4
+        - Key: stelligent-u-lab
+          Value: 4.1.4
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref EC2Instance
+      Tags:
+        - Key: Name
+          Value: mattginstance
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 4.1.4
+        - Key: stelligent-u-lab
+          Value: 4.1.4
+
+Outputs:
+  PrivateIp:
+    Description: Private IP of instance
+    Value: !GetAtt EC2Instance.PrivateIp
+  InstanceId:
+    Description: Instance ID
+    Value: !Ref EC2Instance
+  PublicIp:
+    Description: Public IP connected to instance
+    Value: !Ref ElasticIP
+  
+
+
+

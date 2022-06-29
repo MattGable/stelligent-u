@@ -1,0 +1,14 @@
+[
+    {
+        "ParameterKey":"ami",
+        "ParameterValue":"ami-0cff7528ff583bf9a"
+    },
+    {
+        "ParameterKey":"instance",
+        "ParameterValue":"t2.medium"
+    },
+    {
+        "ParameterKey":"key",
+        "ParameterValue":"mattgkey"
+    }
+]

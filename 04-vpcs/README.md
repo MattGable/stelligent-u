@@ -110,6 +110,8 @@ AWS CLI.
 
 - Save the output as a .pem file in your project directory.
 
+Saved but not checked in
+
 - Be sure to create it in the same region you'll be doing your labs.
 
 #### Lab 4.1.4: Test Instance
@@ -133,10 +135,14 @@ Launch an EC2 instance into your VPC.
 
 _After you launch your new stack, can you ssh to the instance?_
 
+No. ( lab 4.1.5 will solve this I think :) 
+
 ##### Question: Verify Connectivity
 
 _Is there a way that you can verify Internet connectivity from the instance
 without ssh'ing to it?_
+
+SSM would work, but it needs additional configuration on my stack
 
 #### Lab 4.1.5: Security Group
 
@@ -147,6 +153,8 @@ Add a security group to your EC2 stack:
 ##### Question: Connectivity
 
 _Can you ssh to your instance yet?_
+
+Yes.
 
 #### Lab 4.1.6: Elastic IP
 
@@ -164,13 +172,19 @@ reachable from anywhere outside your VPC.
 
 _Can you ping your instance now?_
 
+Had to tweak icmp setting via an update, but yes
+
 ##### Question: SSH
 
 _Can you ssh into your instance now?_
 
+Yes
+
 ##### Question: Traffic
 
 _If you can ssh, can you send any traffic (e.g. curl) out to the Internet?_
+
+Yes default (and the SG I added) allowed permissive egress 
 
 At this point, you've made your public EC2 instance an [ssh bastion](https://docs.aws.amazon.com/quickstart/latest/linux-bastion/architecture.html).
 We'll make use of that to explore your network below.
@@ -200,14 +214,19 @@ existing instance stack.
 
 _Can you find a way to ssh to this instance?_
 
+The instance does not have a public IP so no ssh connectivity as submitted
 ##### Question: Egress
 
 _If you can ssh to it, can you send traffic out?_
+
+I would assume traffic would go out, but no proof of concept
 
 ##### Question: Deleting the Gateway
 
 _If you delete the NAT gateway, what happens to the ssh session on your private
 instance?_
+
+No connectivity per previous step
 
 ##### Question: Recreating the Gateway
 
@@ -215,6 +234,8 @@ _If you recreate the NAT gateway and detach the Elastic IP from the public EC2
 instance, can you still reach the instance from the outside?_
 
 Test it out with the AWS console.
+
+A new IP was allocated but no connectivity
 
 #### Lab 4.1.8: Network ACL
 
@@ -224,13 +245,15 @@ First, add one on the public subnet:
 
 - It applies to all traffic (0.0.0.0/0).
 
-- Only allows ssh traffic from your IP address.
+- Only allows ssh traffic from your IP address (skipped in lieu of a permissive rule that will allow ssh and all other traffic)
 
 - Allows egress traffic to anything.
 
 ##### Question: EC2 Connection
 
 _Can you still reach your EC2 instances?_
+
+No I can no longer reach the instances
 
 Add another ACL to your private subnet:
 
@@ -242,6 +265,8 @@ Add another ACL to your private subnet:
   public subnet.
 
 _Verify again that you can reach your instance._
+
+No instance connectivity on either instance
 
 ### Retrospective 4.1
 
