@@ -6,7 +6,7 @@ Parameters:
     Type: String
     # Default: ami-052efd3df9dad4825
     # Default: ami-00080c12a70fa4caa
-    Default: ami-0133407e358cc1af0
+    Default: ami-08d4ac5b634553e16
 
 # Use public Systems Manager Parameter
   WindowsId:
@@ -60,10 +60,11 @@ Resources:
           # sudo exec >/usr/local/mattlogfile.txt 2>&1
           sudo apt-get update
           yes | sudo apt-get install awscli
-          amazon-cloudwatch-agent-ctl -a start
           touch /usr/mattlog.txt
           sudo curl -o /usr/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb >> mattlog.txt 
           sudo dpkg -i -E /usr/amazon-cloudwatch-agent.deb >> /usr/mattlog.txt
+          apt-get update && apt-get install collectd
+          /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c default >> /usr/mattlog.txt
           rm /var/lib/cloud/instances/*/sem/config_scripts_user
           # Test update
   UbuntuElasticIP:
