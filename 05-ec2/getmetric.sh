@@ -7,6 +7,8 @@
 #     --unit Percent \
 #     --statistics Average
 
+sudo exec >/usr/local/logfile.txt 2>&1
+
 aws cloudwatch get-metric-statistics \
 --metric-name CPUUtilization \
 --start-time 2022-06-26T23:18:00 \

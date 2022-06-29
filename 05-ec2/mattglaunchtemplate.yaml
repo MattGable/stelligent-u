@@ -4,7 +4,9 @@ Description: Launch template for EC2 instances
 Parameters:
   UbuntuId:
     Type: String
-    Default: ami-052efd3df9dad4825
+    # Default: ami-052efd3df9dad4825
+    # Default: ami-00080c12a70fa4caa
+    Default: ami-0133407e358cc1af0
 
 # Use public Systems Manager Parameter
   WindowsId:
@@ -17,6 +19,10 @@ Resources:
     Properties:
       LaunchTemplateName: mattgtemplate
       LaunchTemplateData:
+        IamInstanceProfile:
+          Arn: !GetAtt
+            - CFInstanceProfile
+            - Arn
         InstanceType: t2.large
         KeyName: mattgclikey
         SecurityGroupIds:
@@ -48,11 +54,46 @@ Resources:
       LaunchTemplate: 
         LaunchTemplateId: !Ref LaunchTemplate1
         Version: 1
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # sudo exec >/usr/local/mattlogfile.txt 2>&1
+          sudo apt-get update
+          yes | sudo apt-get install awscli
+          amazon-cloudwatch-agent-ctl -a start
+          touch /usr/mattlog.txt
+          sudo curl -o /usr/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb >> mattlog.txt 
+          sudo dpkg -i -E /usr/amazon-cloudwatch-agent.deb >> /usr/mattlog.txt
+          rm /var/lib/cloud/instances/*/sem/config_scripts_user
+          # Test update
   UbuntuElasticIP:
     Type: AWS::EC2::EIP
     Properties: 
       Domain: vpc
       InstanceId: !Ref EC2InstanceUbuntu
+
+  CFRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: 
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+      RoleName: MattGCFRole
+
+  CFInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: mattgip
+      Roles: 
+        - "CloudWatchAgentServerRole"
 
 Outputs:
   UbuntuEIP:

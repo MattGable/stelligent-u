@@ -12,11 +12,11 @@ validate_stack() {
 }
 
 create_stack() {
-    aws cloudformation create-stack --stack-name ${STACK_NAME} --template-body file://$STACK_NAME.yaml
+    aws cloudformation create-stack --stack-name ${STACK_NAME} --template-body file://$STACK_NAME.yaml --capabilities CAPABILITY_NAMED_IAM
 }
 
 update_stack() {
-    aws cloudformation update-stack --stack-name ${STACK_NAME} --template-body file://$STACK_NAME.yaml
+    aws cloudformation update-stack --stack-name ${STACK_NAME} --template-body file://$STACK_NAME.yaml --capabilities CAPABILITY_NAMED_IAM
 }
 
 delete_stack() {
@@ -72,13 +72,13 @@ wait_until_stack_destroys() {
 }   
 
 # Run
-# validate_stack
-# create_stack
-# wait_until_stack_create_completes
-
 validate_stack
-update_stack
-wait_until_stack_update_completes
+create_stack
+wait_until_stack_create_completes
+
+# validate_stack
+# update_stack
+# wait_until_stack_update_completes
 
 # delete_stack
 # wait_until_stack_destroys
