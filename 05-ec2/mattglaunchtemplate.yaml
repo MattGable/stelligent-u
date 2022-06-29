@@ -48,6 +48,21 @@ Resources:
   #       Version: 1
   EC2InstanceUbuntu:
     Type: AWS::EC2::Instance
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          configSet1:
+            - "config1"
+        config1:
+          commands:
+            init-update:
+              command: "sudo apt-get update"
+            init-dl:
+              command: "sudo curl -o /usr/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb"
+            init-install:
+              command: "sudo dpkg -i -E /usr/amazon-cloudwatch-agent.deb"
+            init-install2:
+              command: "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c default"
     Properties:
       ImageId: !Ref UbuntuId
       SubnetId: !ImportValue mattgpublicsubnet1
@@ -57,14 +72,18 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          # sudo exec >/usr/local/mattlogfile.txt 2>&1
           sudo apt-get update
-          yes | sudo apt-get install awscli
-          touch /usr/mattlog.txt
-          sudo curl -o /usr/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb >> mattlog.txt 
-          sudo dpkg -i -E /usr/amazon-cloudwatch-agent.deb >> /usr/mattlog.txt
-          apt-get update && apt-get install collectd
-          /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c default >> /usr/mattlog.txt
+          mkdir -p /opt/aws/bin
+          sudo wget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz
+          sudo python3 -m easy_install --script-dir /opt/aws/bin aws-cfn-bootstrap-py3-latest.tar.gz
+          /opt/aws/bin/cfn-init -c config1
+          # sudo exec >/usr/local/mattlogfile.txt 2>&1
+          #yes | sudo apt-get install awscli
+          #touch /usr/mattlog.txt
+          #sudo curl -o /usr/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb >> mattlog.txt 
+          #sudo dpkg -i -E /usr/amazon-cloudwatch-agent.deb >> /usr/mattlog.txt
+          #apt-get update && apt-get install collectd
+          #/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c default >> /usr/mattlog.txt
           rm /var/lib/cloud/instances/*/sem/config_scripts_user
           # Test update
   UbuntuElasticIP:
