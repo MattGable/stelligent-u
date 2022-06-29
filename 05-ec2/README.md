@@ -332,6 +332,8 @@ Userdata docs to debug.
 Compare those same metrics with the values received from Lab 5.3.1.
 Record your results.
 
+Results were based on the default config and appeared in the metrics in AWS.
+
 ##### Task: Private Subnet
 
 The default VPC has only public subnets that you launched into. Copy
