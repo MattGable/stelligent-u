@@ -72,13 +72,13 @@ wait_until_stack_destroys() {
 }   
 
 # Run
-# validate_stack
-# create_stack
-# wait_until_stack_create_completes
+validate_stack
+create_stack
+wait_until_stack_create_completes
 
 # validate_stack
 # update_stack
 # wait_until_stack_update_completes
 
-delete_stack
-wait_until_stack_destroys
+# delete_stack
+# wait_until_stack_destroys
