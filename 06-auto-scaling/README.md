@@ -104,13 +104,20 @@ Group (ASG): [ask Amazon to create one for us from a running instance](https://d
 
 - Limit the ASG to a single instance at all times.
 
+```
+```
+
 ##### Question: Resources
 
 _What was created in addition to the new Auto Scaling Group?_
 
+A launch configuration
+
 ##### Question: Parameters
 
 _What parameters did Amazon record in the resources it created for you?_
+
+There were items such as creation time, an ARN was created, and many others
 
 #### Lab 6.1.2: Launch Config and ASG in CFN
 

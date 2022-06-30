@@ -80,5 +80,5 @@ wait_until_stack_destroys() {
 # update_stack
 # wait_until_stack_update_completes
 
-# delete_stack
-# wait_until_stack_destroys
+delete_stack
+wait_until_stack_destroys
