@@ -83,8 +83,7 @@ Resources:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       ImageId:  ami-09a41e26df464c548
-      InstanceType: t2.micro
-
+      InstanceType: t2.small
   # DebianElasticIP:
   #   Type: AWS::EC2::EIP
   #   Properties: 

@@ -153,11 +153,15 @@ t2.small. Update your stack.
 
 _After updating your stack, did your running instance get replaced or resized?_
 
+replaced (per docs)
+
 Terminate the instance in your ASG.
 
 ##### Question: Replacement Instance
 
 _Is the replacement instance the new size or the old?_
+
+New size
 
 #### Lab 6.1.4: ASG Update Policy
 
