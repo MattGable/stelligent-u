@@ -176,9 +176,12 @@ type to t2.medium. Update your stack.
 _After updating, what did you see change? Did your running instance get
 replaced this time?_
 
+I did not see the instance get replaced
+
 ##### Question: Launch Config
 
 _Did the launch config change or was it replaced?_
+Replaced
 
 #### Lab 6.1.5: Launch Template
 
@@ -207,6 +210,8 @@ associated with those. Then tear your stack down.
 
 _After you tear down the stack, do all the associated resources go away?
 What's left?_
+
+an old ASG is left after the renaming
 
 ### Retrospective 6.1
 

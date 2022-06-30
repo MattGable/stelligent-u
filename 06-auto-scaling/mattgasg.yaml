@@ -58,8 +58,11 @@ Resources:
   #         Value: 6.x
   MattASG:
     Type: AWS::AutoScaling::AutoScalingGroup
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+        WillReplace: true
     Properties:
-      AutoScalingGroupName: mattgasg
+      AutoScalingGroupName: mattgasgreplacement
       AvailabilityZones:
         - "us-east-1a"
       DesiredCapacity: 1
@@ -83,7 +86,7 @@ Resources:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       ImageId:  ami-09a41e26df464c548
-      InstanceType: t2.small
+      InstanceType: t2.large
   # DebianElasticIP:
   #   Type: AWS::EC2::EIP
   #   Properties: 
