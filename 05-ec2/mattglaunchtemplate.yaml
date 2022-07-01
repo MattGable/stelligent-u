@@ -1,0 +1,123 @@
+Description: Launch template for EC2 instances
+
+# Use public Systems Manager Parameter
+Parameters:
+  UbuntuId:
+    Type: String
+    # Default: ami-052efd3df9dad4825
+    # Default: ami-00080c12a70fa4caa
+    Default: ami-08d4ac5b634553e16
+
+# Use public Systems Manager Parameter
+  WindowsId:
+    Type: String
+    Default: ami-03e42a81d67097502
+
+Resources:
+  LaunchTemplate1:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: mattgtemplate
+      LaunchTemplateData:
+        IamInstanceProfile:
+          Arn: !GetAtt
+            - CFInstanceProfile
+            - Arn
+        InstanceType: t2.large
+        KeyName: mattgclikey
+        SecurityGroupIds:
+          - !ImportValue allowingresssecuritygroup
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: mattgltinstance2
+              - Key: user
+                Value: matthew.gable.labs2
+              - Key: stelligent-u-lesson
+                Value: 5.x
+              - Key: stelligent-u-lab2
+                Value: 5.x
+  # EC2InstanceWindows:
+  #   Type: AWS::EC2::Instance
+  #   Properties:
+  #     ImageId: !Ref WindowsId
+  #     SubnetId: !ImportValue mattgpublicsubnet1
+  #     LaunchTemplate: 
+  #       LaunchTemplateId: !Ref LaunchTemplate1
+  #       Version: 1
+  EC2InstanceUbuntu:
+    Type: AWS::EC2::Instance
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          configSet1:
+            - "config1"
+        config1:
+          commands:
+            init-update:
+              command: "sudo apt-get update"
+            init-dl:
+              command: "sudo curl -o /usr/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb"
+            init-install:
+              command: "sudo dpkg -i -E /usr/amazon-cloudwatch-agent.deb"
+            init-install2:
+              command: "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c default"
+    Properties:
+      ImageId: !Ref UbuntuId
+      SubnetId: !ImportValue mattgpublicsubnet1
+      LaunchTemplate: 
+        LaunchTemplateId: !Ref LaunchTemplate1
+        Version: 1
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          sudo apt-get update
+          mkdir -p /opt/aws/bin
+          sudo wget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz
+          sudo python3 -m easy_install --script-dir /opt/aws/bin aws-cfn-bootstrap-py3-latest.tar.gz
+          /opt/aws/bin/cfn-init -c config1
+          # sudo exec >/usr/local/mattlogfile.txt 2>&1
+          #yes | sudo apt-get install awscli
+          #touch /usr/mattlog.txt
+          #sudo curl -o /usr/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb >> mattlog.txt 
+          #sudo dpkg -i -E /usr/amazon-cloudwatch-agent.deb >> /usr/mattlog.txt
+          #apt-get update && apt-get install collectd
+          #/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c default >> /usr/mattlog.txt
+          rm /var/lib/cloud/instances/*/sem/config_scripts_user
+          # Test update
+  UbuntuElasticIP:
+    Type: AWS::EC2::EIP
+    Properties: 
+      Domain: vpc
+      InstanceId: !Ref EC2InstanceUbuntu
+
+  CFRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: 
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+      RoleName: MattGCFRole
+
+  CFInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: mattgip
+      Roles: 
+        - "CloudWatchAgentServerRole"
+
+Outputs:
+  UbuntuEIP:
+    Description: The Elastic IP of the Ubuntu Instance
+    Value: !Ref UbuntuElasticIP
+    Export:
+      Name: mattgubuntueip

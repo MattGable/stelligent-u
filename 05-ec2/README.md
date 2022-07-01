@@ -140,6 +140,7 @@ Windows Server 2012 R2:
 
 - Query the stack's events using the AWS CLI. What happened to your
   original EC2 Windows instance?
+  The original instance was marked for cleanup and deleted.
 
 #### Lab 5.1.4: Teardown
 
@@ -149,21 +150,33 @@ and the instance being considered eliminated altogether.
 - Delete your Stack. Immediately after initiating Stack deletion, see
   if you can query your instance states.
 
+```
+An error occurred (ValidationError) when calling the DescribeStackEvents operation: Stack [mattglaunchtemplate] does not exist
+```
+
 ### Retrospective 5.1
 
 #### Task: Automating AMI Discovery
 
 In lab 2, how did you find the AMI IDs required to launch the instances
-in your target region? If you did *not use* a scripted mechanism, go
+in your target region?
+
+Found via the UI.
+
+ If you did *not use* a scripted mechanism, go
 back and change your lab's code and repeat that lab: parameterize the
 CFN template to accept both Linux and Windows AMI IDs, and provide the
 values via a scripted mechanism.
+
+aws ec2 describe images is one programmatic way to get lists of AMIs
 
 #### Question: Resource Replacement
 
 _When updating a Stack containing an EC2 instance,
 [what other changes](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-update-behaviors.html)
 will cause the same thing to occur as in Lab 5.1.3?_
+
+changing the AMI, changing the instance IPV6 address, or changing the availability zone will require the same replacement as seen with changing AMI
 
 ## Lesson 5.2: Instance Access
 
@@ -200,6 +213,8 @@ function.
 
 Try pinging that IP address. Does it work?
 
+Yes
+
 - Using the CFN template, create a Security Group enabling
   [ICMP](https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol).
 
@@ -233,11 +248,15 @@ able to SSH into the instance to debug and troubleshoot issues.
 
 Can you SSH into the instance?
 
+Yes.
+
 - Update the CFN template to modify the ICMP-enabling Security Group,
   enabling SSH ingress on Port 22 from your IP and update the stack.
 
 Now can you SSH into your instance? If not, troubleshoot and fix the
 issue using your CFN template.
+
+Yes. 
 
 ### Retrospective 5.2
 
@@ -312,6 +331,8 @@ Userdata docs to debug.
 
 Compare those same metrics with the values received from Lab 5.3.1.
 Record your results.
+
+Results were based on the default config and appeared in the metrics in AWS.
 
 ##### Task: Private Subnet
 
