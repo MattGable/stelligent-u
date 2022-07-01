@@ -309,6 +309,8 @@ using the CLI. Observe Auto Scaling as it launches a replacement
 instance. Take note of what it does with the instance you marked
 unhealthy.
 
+aws autoscaling enter-standby --instance-ids i-01f5cfa6a12d19bad --auto-scaling-group-name mattgasg-MattASG-28HJXOEYLE7F --should-decrement-desired-capacity
+
 #### Lab 6.2.4: Troubleshooting Features
 
 Simply killing a failing server feels like an easy remedy when all your
@@ -323,6 +325,9 @@ Standby allows you to take an instance out of action without changing
 anything else: no new instance is created, the standby one isn't
 terminated, even its health check remains as it was before standby.
 Manually put an instance on standby [using the CLI](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html#standby-state-aws-cli).
+
+aws autoscaling enter-standby --instance-ids i-01f5cfa6a12d19bad --auto-scaling-group-name mattgasg-MattASG-28HJXOEYLE7F --should-decrement-desired-capacity
+
 Observe your ASG in the console and see for yourself that the health
 check status doesn't change and the scaled group hasn't changed. Put the
 instance back in action. Note the commands you used and the change to
@@ -345,6 +350,8 @@ commands you run.
 #### Question: CloudWatch
 
 _How would you use AWS CloudWatch to help monitor your ASG?_
+
+You could enable ASG group metrics sent to cloudwatch. This would help with instance availabili[yt and could allow for some very useful alerts
 
 You can read more [here](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-monitoring.html)
 about CloudWatch monitoring with ASGs.
