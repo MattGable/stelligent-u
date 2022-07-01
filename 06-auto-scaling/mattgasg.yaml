@@ -1,0 +1,135 @@
+Description: Launch template for EC2 instances
+
+# Use public Systems Manager Parameter
+Parameters:
+  DebianId:
+    Type: String
+    #Default: ami-08d4ac5b634553e16 ubuntu 20.04
+    Default: ami-09a41e26df464c548 # debian
+
+Resources:
+#   LaunchTemplate1:
+#     Type: AWS::EC2::LaunchTemplate
+#     Properties:
+#       LaunchTemplateName: mattgtemplate
+#       LaunchTemplateData:
+#         IamInstanceProfile:
+#           Arn: !GetAtt
+#             - CFInstanceProfile
+#             - Arn
+#         InstanceType: t2.micro
+#         KeyName: mattgclikey
+#         SecurityGroupIds:
+#           - !ImportValue allowingresssecuritygroup
+#         TagSpecifications:
+#           - ResourceType: instance
+#             Tags:
+#               - Key: Name
+#                 Value: mattgltinstance2
+#               - Key: user
+#                 Value: matthew.gable.labs2
+#               - Key: stelligent-u-lesson
+#                 Value: 6.x
+#               - Key: stelligent-u-lab2
+#                 Value: 6.x
+#   EC2InstanceDebian:
+#     Type: AWS::EC2::Instance
+#     Properties:
+#       ImageId: !Ref DebianId
+#       SubnetId: !ImportValue mattgpublicsubnet1
+#       LaunchTemplate: 
+#         LaunchTemplateId: !Ref LaunchTemplate1
+#         Version: 1
+  EC2InstanceDebian:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref DebianId
+      SubnetId: !ImportValue mattgpublicsubnet1
+      InstanceType: t2.micro
+      KeyName: mattgclikey
+      SecurityGroupIds:
+       - !ImportValue allowingresssecuritygroup
+      Tags:
+        - Key: Name
+          Value: mattgdebianinstance
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 6.x
+        - Key: stelligent-u-lab
+          Value: 6.x
+
+          #================================
+  MattASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    # UpdatePolicy:
+    #   AutoScalingReplacingUpdate:
+    #     WillReplace: true
+    Properties:
+      # AutoScalingGroupName: mattgasgA
+      VPCZoneIdentifier:
+        -  !ImportValue mattgpublicsubnet1
+      AvailabilityZones:
+        - "us-east-1a"
+      DesiredCapacity: 1
+      LaunchConfigurationName: !Ref MattGLaunchConfiguration
+      MinSize: 0
+      MaxSize: 1
+      Tags:
+        - Key: Name
+          Value: mattgasg
+          PropagateAtLaunch: true
+        - Key: user
+          Value: matthew.gable.labs
+          PropagateAtLaunch: true
+        - Key: stelligent-u-lesson
+          Value: 6.x
+          PropagateAtLaunch: true
+        - Key: stelligent-u-lab
+          Value: 6.x
+          PropagateAtLaunch: true
+  MattGLaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId:  ami-09a41e26df464c548
+      InstanceType: t2.micro
+      InstanceId: !Ref EC2InstanceDebian
+
+
+
+      #=============================
+  DebianElasticIP:
+    Type: AWS::EC2::EIP
+    Properties: 
+      Domain: vpc
+      InstanceId: !Ref EC2InstanceDebian
+
+  # CFRole:
+  #   Type: 'AWS::IAM::Role'
+  #   Properties:
+  #     AssumeRolePolicyDocument: 
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal: 
+  #             Service:
+  #               - "ec2.amazonaws.com"
+  #           Action:
+  #             - "sts:AssumeRole"
+  #     ManagedPolicyArns:
+  #       - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+  #     RoleName: MattGCFRole
+
+  # CFInstanceProfile:
+  #   Type: AWS::IAM::InstanceProfile
+  #   Properties: 
+  #     InstanceProfileName: mattgip
+  #     Roles: 
+  #       - "CloudWatchAgentServerRole"
+
+# Outputs:
+#   DebianEIP:
+#     Description: The Elastic IP of the Debian Instance
+#     Value: !Ref DebianElasticIP
+#     Export:
+#       Name: mattgdebianeip

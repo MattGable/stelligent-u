@@ -104,13 +104,20 @@ Group (ASG): [ask Amazon to create one for us from a running instance](https://d
 
 - Limit the ASG to a single instance at all times.
 
+```
+```
+
 ##### Question: Resources
 
 _What was created in addition to the new Auto Scaling Group?_
 
+A launch configuration
+
 ##### Question: Parameters
 
 _What parameters did Amazon record in the resources it created for you?_
+
+There were items such as creation time, an ARN was created, and many others
 
 #### Lab 6.1.2: Launch Config and ASG in CFN
 
@@ -135,6 +142,8 @@ created for you in Lab 6.1.1.
 _What config info or resources did you have to create explicitly that Amazon
 created for you when launching an ASG from an existing instance?_
 
+I had to create both the ASG and a launch configuration
+
 #### Lab 6.1.3: Launch Config Changes
 
 Modify your launch config by increasing your instances from t2.micro to
@@ -144,11 +153,15 @@ t2.small. Update your stack.
 
 _After updating your stack, did your running instance get replaced or resized?_
 
+replaced (per docs)
+
 Terminate the instance in your ASG.
 
 ##### Question: Replacement Instance
 
 _Is the replacement instance the new size or the old?_
+
+New size
 
 #### Lab 6.1.4: ASG Update Policy
 
@@ -163,9 +176,12 @@ type to t2.medium. Update your stack.
 _After updating, what did you see change? Did your running instance get
 replaced this time?_
 
+I did not see the instance get replaced
+
 ##### Question: Launch Config
 
 _Did the launch config change or was it replaced?_
+Replaced
 
 #### Lab 6.1.5: Launch Template
 
@@ -194,6 +210,8 @@ associated with those. Then tear your stack down.
 
 _After you tear down the stack, do all the associated resources go away?
 What's left?_
+
+an old ASG is left after the renaming
 
 ### Retrospective 6.1
 
@@ -225,10 +243,29 @@ From that output, find the name of your ASG.
 
 ##### Question: Filtering Output
 
+aws cloudformation describe-stack-resources --stack-name mattgasg
+
 _Can you filter your output with "\--query" to print only your ASGs
-resource ID? Given that name, [describe your ASG](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/describe-auto-scaling-groups.html).
+resource ID? 
+
+```
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[*].Tags[*].ResourceId'
+
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[].Tags[?contains(ResourceId, `mattg`)]'
+
+Final answer:
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[].Tags[?contains(ResourceId, `mattg`)]'.ResourceId
+
+```
+
+Given that name, [describe your ASG](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/describe-auto-scaling-groups.html).
 Find the Instance ID. Can you filter the output to print only the Instance ID
 value?_
+
+```
+Using mattg, but could also put in the previously found resource id
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?contains(AutoScalingGroupName, `mattg`)].Instances[*].InstanceId'
+``
 
 (You can use the `--query` option, but you can also use
 [jq](https://stedolan.github.io/jq/). Both are useful in different scenarios.)
@@ -242,6 +279,8 @@ the new instance launch.
 _How long did it take for the new instance to spin up? How long before it was
 marked as healthy?_
 
+a few minutes for it to be spun up and pass health checks
+
 #### Lab 6.2.2: Scale Out
 
 Watch your stack and your ASG in the web console as you do this lab.
@@ -253,9 +292,15 @@ then update the stack.
 
 _Did it work? If it didn't, what else do you have to increase?_
 
+```
+Desired capacity:2 must be between the specified min size:1 and max size:1
+```
+
 ##### Question: Update Delay
 
 _How quickly after your stack update did you see the ASG change?_
+
+It didn't change as far as I can tell since the update didn't pass
 
 #### Lab 6.2.3: Manual Interference
 
@@ -263,6 +308,8 @@ Take one of your instances [out of your ASG manually](http://docs.aws.amazon.com
 using the CLI. Observe Auto Scaling as it launches a replacement
 instance. Take note of what it does with the instance you marked
 unhealthy.
+
+aws autoscaling enter-standby --instance-ids i-01f5cfa6a12d19bad --auto-scaling-group-name mattgasg-MattASG-28HJXOEYLE7F --should-decrement-desired-capacity
 
 #### Lab 6.2.4: Troubleshooting Features
 
@@ -278,6 +325,9 @@ Standby allows you to take an instance out of action without changing
 anything else: no new instance is created, the standby one isn't
 terminated, even its health check remains as it was before standby.
 Manually put an instance on standby [using the CLI](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html#standby-state-aws-cli).
+
+aws autoscaling enter-standby --instance-ids i-01f5cfa6a12d19bad --auto-scaling-group-name mattgasg-MattASG-28HJXOEYLE7F --should-decrement-desired-capacity
+
 Observe your ASG in the console and see for yourself that the health
 check status doesn't change and the scaled group hasn't changed. Put the
 instance back in action. Note the commands you used and the change to
@@ -300,6 +350,8 @@ commands you run.
 #### Question: CloudWatch
 
 _How would you use AWS CloudWatch to help monitor your ASG?_
+
+You could enable ASG group metrics sent to cloudwatch. This would help with instance availabili[yt and could allow for some very useful alerts
 
 You can read more [here](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-monitoring.html)
 about CloudWatch monitoring with ASGs.
