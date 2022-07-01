@@ -40,29 +40,35 @@ Resources:
 #       LaunchTemplate: 
 #         LaunchTemplateId: !Ref LaunchTemplate1
 #         Version: 1
-  # EC2InstanceDebian:
-  #   Type: AWS::EC2::Instance
-  #   Properties:
-  #     ImageId: !Ref DebianId
-  #     SubnetId: !ImportValue mattgpublicsubnet1
-  #     InstanceType: t2.micro
-  #     KeyName: mattgclikey
-  #     Tags:
-  #       - Key: Name
-  #         Value: mattgdebianinstance
-  #       - Key: user
-  #         Value: matthew.gable.labs
-  #       - Key: stelligent-u-lesson
-  #         Value: 6.x
-  #       - Key: stelligent-u-lab
-  #         Value: 6.x
+  EC2InstanceDebian:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref DebianId
+      SubnetId: !ImportValue mattgpublicsubnet1
+      InstanceType: t2.micro
+      KeyName: mattgclikey
+      SecurityGroupIds:
+       - !ImportValue allowingresssecuritygroup
+      Tags:
+        - Key: Name
+          Value: mattgdebianinstance
+        - Key: user
+          Value: matthew.gable.labs
+        - Key: stelligent-u-lesson
+          Value: 6.x
+        - Key: stelligent-u-lab
+          Value: 6.x
+
+          #================================
   MattASG:
     Type: AWS::AutoScaling::AutoScalingGroup
-    UpdatePolicy:
-      AutoScalingReplacingUpdate:
-        WillReplace: true
+    # UpdatePolicy:
+    #   AutoScalingReplacingUpdate:
+    #     WillReplace: true
     Properties:
-      AutoScalingGroupName: mattgasgreplacement
+      # AutoScalingGroupName: mattgasgA
+      VPCZoneIdentifier:
+        -  !ImportValue mattgpublicsubnet1
       AvailabilityZones:
         - "us-east-1a"
       DesiredCapacity: 1
@@ -86,12 +92,17 @@ Resources:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       ImageId:  ami-09a41e26df464c548
-      InstanceType: t2.large
-  # DebianElasticIP:
-  #   Type: AWS::EC2::EIP
-  #   Properties: 
-  #     Domain: vpc
-  #     InstanceId: !Ref EC2InstanceDebian
+      InstanceType: t2.micro
+      InstanceId: !Ref EC2InstanceDebian
+
+
+
+      #=============================
+  DebianElasticIP:
+    Type: AWS::EC2::EIP
+    Properties: 
+      Domain: vpc
+      InstanceId: !Ref EC2InstanceDebian
 
   # CFRole:
   #   Type: 'AWS::IAM::Role'

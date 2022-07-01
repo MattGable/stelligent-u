@@ -243,10 +243,29 @@ From that output, find the name of your ASG.
 
 ##### Question: Filtering Output
 
+aws cloudformation describe-stack-resources --stack-name mattgasg
+
 _Can you filter your output with "\--query" to print only your ASGs
-resource ID? Given that name, [describe your ASG](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/describe-auto-scaling-groups.html).
+resource ID? 
+
+```
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[*].Tags[*].ResourceId'
+
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[].Tags[?contains(ResourceId, `mattg`)]'
+
+Final answer:
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[].Tags[?contains(ResourceId, `mattg`)]'.ResourceId
+
+```
+
+Given that name, [describe your ASG](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/describe-auto-scaling-groups.html).
 Find the Instance ID. Can you filter the output to print only the Instance ID
 value?_
+
+```
+Using mattg, but could also put in the previously found resource id
+aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?contains(AutoScalingGroupName, `mattg`)].Instances[*].InstanceId'
+``
 
 (You can use the `--query` option, but you can also use
 [jq](https://stedolan.github.io/jq/). Both are useful in different scenarios.)
@@ -259,6 +278,8 @@ the new instance launch.
 
 _How long did it take for the new instance to spin up? How long before it was
 marked as healthy?_
+
+a few minutes for it to be spun up and pass health checks
 
 #### Lab 6.2.2: Scale Out
 
