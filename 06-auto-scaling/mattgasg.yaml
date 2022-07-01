@@ -71,7 +71,7 @@ Resources:
         -  !ImportValue mattgpublicsubnet1
       AvailabilityZones:
         - "us-east-1a"
-      DesiredCapacity: 1
+      DesiredCapacity: 2
       LaunchConfigurationName: !Ref MattGLaunchConfiguration
       MinSize: 1
       MaxSize: 1

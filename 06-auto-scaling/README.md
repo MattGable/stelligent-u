@@ -292,9 +292,15 @@ then update the stack.
 
 _Did it work? If it didn't, what else do you have to increase?_
 
+```
+Desired capacity:2 must be between the specified min size:1 and max size:1
+```
+
 ##### Question: Update Delay
 
 _How quickly after your stack update did you see the ASG change?_
+
+It didn't change as far as I can tell since the update didn't pass
 
 #### Lab 6.2.3: Manual Interference
 
